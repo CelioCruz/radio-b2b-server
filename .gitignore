@@ -1,0 +1,4 @@
+node_modules/ 
+storage/ 
+.env 
+SUBIR_PRO_GITHUB.bat 

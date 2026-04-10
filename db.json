@@ -1,0 +1,13 @@
+{
+  "users": [
+    {
+      "id": "admin-id-001",
+      "username": "DevSistem",
+      "password": "Devsistem@300723#"
+    }
+  ],
+  "companies": [],
+  "licenses": [],
+  "ads": [],
+  "heartbeats": []
+}
