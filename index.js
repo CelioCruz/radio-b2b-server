@@ -189,10 +189,10 @@ app.post('/api/license/validate', (req, res) => {
   const adFiles = fs.existsSync(adPath) ? fs.readdirSync(adPath).filter(f => f.toLowerCase().endsWith('.mp3') || f.toLowerCase().endsWith('.mpeg')) : [];
   const musicPath = path.join(__dirname, 'storage', 'musics');
   const musicFiles = fs.existsSync(musicPath) ? fs.readdirSync(musicPath).filter(f => f.toLowerCase().endsWith('.mp3') || f.toLowerCase().endsWith('.mpeg')) : [];
-  res.json({ valid: true, expiresAt: lic.expires_at, company: company.name, companyId: company.id, ads: adFiles.map(f => `http://localhost:${PORT}/storage/ads/${company.id}/${f}`), musics: musicFiles.map(f => `http://localhost:${PORT}/storage/musics/${f}`) });
+  res.json({ valid: true, expiresAt: lic.expires_at, company: company.name, companyId: company.id, ads: adFiles.map(f => `https://radio-b2b-server.onrender.com/storage/ads/${company.id}/${f}`), musics: musicFiles.map(f => `https://radio-b2b-server.onrender.com/storage/musics/${f}`) });
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ API rodando em http://localhost:${PORT}`);
+  console.log(`✅ API rodando em https://radio-b2b-server.onrender.com`);
   syncMusics(); // Chamada para iniciar o download ao ligar o servidor
 });
