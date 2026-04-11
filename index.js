@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
-const JAMENDO_CLIENT_ID = '445a9998'; // VOCÊ DEVE TROCAR PELO SEU CLIENT ID DO JAMENDO
+const JAMENDO_CLIENT_ID = '4760AD12';
 const MAX_MUSICS = 1000;
 
 // Músicas de reserva ESTÁVEIS com VOZ (Vocals) que permitem download direto
@@ -134,6 +134,24 @@ setInterval(syncMusics, 24 * 60 * 60 * 1000);
 app.post('/api/admin/sync-musics', (req, res) => {
   syncMusics(); // Roda em background
   res.json({ success: true, message: 'Sincronização iniciada em segundo plano.' });
+});
+
+// NOVA ROTA: Download Manual de Música
+app.post('/api/admin/download-manual', async (req, res) => {
+  const { url, name } = req.body;
+  if (!url) return res.status(400).json({ success: false, error: 'URL é obrigatória' });
+
+  const fileName = name ? `${name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.mp3` : `${uuidv4()}.mp3`;
+  const musicPath = path.join(__dirname, 'storage', 'musics');
+  const dest = path.join(musicPath, fileName);
+
+  try {
+    if (!fs.existsSync(musicPath)) fs.mkdirSync(musicPath, { recursive: true });
+    await downloadFile(url, dest);
+    res.json({ success: true, message: `Música baixada com sucesso: ${fileName}` });
+  } catch (error) {
+    res.status(500).json({ success: false, error: `Erro ao baixar: ${error.message}` });
+  }
 });
 
 app.post('/api/admin/login', (req, res) => {
