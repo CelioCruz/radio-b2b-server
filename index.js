@@ -58,45 +58,38 @@ const downloadFile = (url, dest) => {
 };
 
 // --- LOGICA DE SINCRONIZAÇÃO (1000 MUSICAS) ---
-async function syncMusics() {
-  console.log('🎵 Iniciando sincronização e SUBSTITUIÇÃO de músicas...');
+async function syncMusics(retryCount = 0) {
+  const MAX_RETRIES = 5;
+  console.log(`🎵 [AUTOSYNC] Tentativa ${retryCount + 1}: Sincronizando músicas...`);
+  
   const musicPath = path.join(__dirname, 'storage', 'musics');
   if (!fs.existsSync(musicPath)) fs.mkdirSync(musicPath, { recursive: true });
 
   const startDownload = async (tracks) => {
-    // 1. LIMPAR TUDO ANTES DE COMEÇAR (SUBSTITUIÇÃO)
-    const oldFiles = fs.readdirSync(musicPath);
-    for (const file of oldFiles) {
-      if (file.toLowerCase().endsWith('.mp3') || file.toLowerCase().endsWith('.mpeg')) {
-        try {
-          fs.unlinkSync(path.join(musicPath, file));
-        } catch (e) {
-          console.error(`Não foi possível apagar ${file}:`, e.message);
+    // Só apaga se realmente tiver novas músicas para baixar para não deixar sem som
+    if (tracks && tracks.length > 0) {
+      console.log('🗑️ [AUTOSYNC] Substituindo músicas antigas...');
+      const oldFiles = fs.readdirSync(musicPath);
+      for (const file of oldFiles) {
+        if (file.toLowerCase().endsWith('.mp3')) {
+          try { fs.unlinkSync(path.join(musicPath, file)); } catch (e) {}
         }
       }
-    }
-    console.log('🗑️ Pasta limpa. Baixando novas músicas...');
-
-    // 2. BAIXAR NOVAS
-    for (let i = 0; i < tracks.length; i++) {
-      const track = tracks[i];
-      const fileName = `${track.id}.mp3`;
-      const dest = path.join(musicPath, fileName);
       
-      try {
-        await downloadFile(track.audio, dest);
-        if (i % 20 === 0 || tracks.length < 10) console.log(`🚀 Progresso: ${i+1}/${tracks.length} músicas baixadas...`);
-      } catch (e) {
-        console.error(`❌ Erro ao baixar ${track.name}:`, e.message);
+      for (let i = 0; i < tracks.length; i++) {
+        const track = tracks[i];
+        const dest = path.join(musicPath, `${track.id}.mp3`);
+        try {
+          await downloadFile(track.audio, dest);
+          if (i % 50 === 0) console.log(`🚀 [AUTOSYNC] Progresso: ${i+1}/${tracks.length} músicas...`);
+        } catch (e) { console.error(`❌ Erro no download (${track.name}):`, e.message); }
       }
+      console.log('✨ [AUTOSYNC] Concluído com sucesso!');
     }
-    console.log('✨ Sincronização e substituição concluídas!');
   };
 
   try {
-    // Agora buscamos especificamente músicas com VOCAL e estilo Ambient/Lounge/Pop
-    const apiUrl = `https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_CLIENT_ID}&format=json&limit=${MAX_MUSICS}&audioformat=mp32&order=releasedate_desc&vocalinstrumental=vocal&tags=ambient,lounge,pop`;
-    console.log(`🔗 Buscando músicas com voz (ambiente/lounge) no Jamendo...`);
+    const apiUrl = `https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_CLIENT_ID}&format=json&limit=${MAX_MUSICS}&audioformat=mp32&vocalinstrumental=vocal&tags=ambient,lounge,pop`;
     
     https.get(apiUrl, (res) => {
       let data = '';
@@ -106,21 +99,28 @@ async function syncMusics() {
           const parsed = JSON.parse(data);
           if (parsed.results && parsed.results.length > 0) {
             await startDownload(parsed.results);
+          } else if (retryCount < MAX_RETRIES) {
+            console.log('⚠️ [AUTOSYNC] API Jamendo vazia. Tentando novamente em 1 minuto...');
+            setTimeout(() => syncMusics(retryCount + 1), 60000);
           } else {
-            console.error('⚠️ Jamendo API falhou (ID Inválido). Usando músicas de backup...');
+            console.log('⚠️ [AUTOSYNC] Usando músicas de backup após falhas consecutivas...');
             await startDownload(BACKUP_MUSICS);
           }
         } catch (e) {
-          console.error('❌ Erro Jamendo, usando backup:', e.message);
+          console.error('❌ [AUTOSYNC] Erro ao parsear API, tentando backup...');
           await startDownload(BACKUP_MUSICS);
         }
       });
     }).on('error', (err) => {
-      console.error('❌ Erro de conexão, usando backup:', err.message);
-      startDownload(BACKUP_MUSICS);
+      console.error('❌ [AUTOSYNC] Erro de conexão:', err.message);
+      if (retryCount < MAX_RETRIES) {
+        setTimeout(() => syncMusics(retryCount + 1), 30000);
+      } else {
+        startDownload(BACKUP_MUSICS);
+      }
     });
   } catch (error) {
-    console.error('❌ Erro inesperado, usando backup:', error);
+    console.error('❌ [AUTOSYNC] Erro crítico:', error);
     startDownload(BACKUP_MUSICS);
   }
 }
