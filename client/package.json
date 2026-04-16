@@ -25,7 +25,7 @@
     ],
     "win": {
       "target": "nsis",
-      "icon": "radio.png",
+      "icon": "C_logo.png",
       "publisherName": "DevSistem"
     },
     "nsis": {

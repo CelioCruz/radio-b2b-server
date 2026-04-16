@@ -5,8 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Devsistem Admin - Servidor</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: white; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .container { background: #1e293b; padding: 40px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); width: 100%; max-width: 600px; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url('C_logo.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white; 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+        }
+        .container { background: rgba(30, 41, 59, 0.9); padding: 40px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); width: 100%; max-width: 600px; position: relative; }
         h1 { color: #38bdf8; text-align: center; }
         input, select, button { display: block; width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
         button { background: #38bdf8; color: #0f172a; font-weight: bold; border: none; cursor: pointer; transition: background 0.2s; }
@@ -17,6 +29,7 @@
         .key { color: #fbbf24; font-family: monospace; }
         #login-section { display: block; }
         #admin-section { display: none; }
+        .signature { margin-top: 20px; color: #94a3b8; font-size: 0.8rem; text-align: center; font-style: italic; }
     </style>
 </head>
 <body>
@@ -47,6 +60,7 @@
                 <!-- Empresas aparecem aqui -->
             </div>
         </div>
+        <div class="signature">criado e desenvolvido por Cruz Dev Soft</div>
     </div>
 
     <script>

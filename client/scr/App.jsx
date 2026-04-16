@@ -155,6 +155,9 @@ function App() {
       <button onClick={() => setIsAdminMode(true)} style={{ position: 'absolute', bottom: 20, background: 'none', color: '#334155', border: 'none', cursor: 'pointer', fontSize: 10, left: '50%', transform: 'translateX(-50%)' }}>
         ⚙️ Configurações do Diretor
       </button>
+      <div style={{ position: 'absolute', bottom: 5, width: '100%', left: 0, fontSize: 9, color: '#475569', textAlign: 'center' }}>
+        criado e desenvolvido por Cruz Dev Soft
+      </div>
     </div>
   );
 }
