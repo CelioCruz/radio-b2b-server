@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devsistem Admin - Servidor</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: white; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .container { background: #1e293b; padding: 40px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); width: 100%; max-width: 600px; }
+        h1 { color: #38bdf8; text-align: center; }
+        input, select, button { display: block; width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
+        button { background: #38bdf8; color: #0f172a; font-weight: bold; border: none; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #0ea5e9; }
+        .company-list { margin-top: 30px; }
+        .company-item { background: #334155; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #38bdf8; }
+        .company-item small { color: #94a3b8; }
+        .key { color: #fbbf24; font-family: monospace; }
+        #login-section { display: block; }
+        #admin-section { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Devsistem Audio Adm</h1>
+        
+        <div id="login-section">
+            <input type="text" id="username" placeholder="Usuário">
+            <input type="password" id="password" placeholder="Senha">
+            <button onclick="login()">ENTRAR NO SISTEMA</button>
+        </div>
+
+        <div id="admin-section">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Nova Empresa</h3>
+                <button onclick="logout()" style="width: auto; padding: 5px 10px; background: #ef4444; color: white;">SAIR</button>
+            </div>
+            <input type="text" id="comp-name" placeholder="Nome da Empresa">
+            <select id="lic-type">
+                <option value="trial">1 Semana (Grátis)</option>
+                <option value="semanal">Semanal</option>
+                <option value="mensal" selected>Mensal (R$ 350,00)</option>
+                <option value="anual">Anual (R$ 3.000,00)</option>
+            </select>
+            <button onclick="addCompany()">CADASTRAR EMPRESA</button>
+
+            <div class="company-list" id="company-list">
+                <!-- Empresas aparecem aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = ''; // Usa a mesma origem do servidor
+        let token = '';
+
+        async function login() {
+            const res = await fetch(`${API}/api/admin/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    username: document.getElementById('username').value, 
+                    password: document.getElementById('password').value 
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                token = data.token;
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('admin-section').style.display = 'block';
+                loadCompanies();
+            } else {
+                alert('Credenciais Inválidas! (DevSistem / Devsistem@300723#)');
+            }
+        }
+
+        function logout() {
+            token = '';
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('admin-section').style.display = 'none';
+        }
+
+        async function loadCompanies() {
+            const res = await fetch(`${API}/api/admin/companies`);
+            const data = await res.json();
+            const list = document.getElementById('company-list');
+            list.innerHTML = '<h3>Empresas Cadastradas</h3>';
+            data.forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'company-item';
+                item.innerHTML = `
+                    <strong>${c.name}</strong><br>
+                    <small>Chave: <span class="key">${c.license.key}</span> | Expira: ${new Date(c.license.expires_at).toLocaleDateString()}</small><br>
+                    <small>Tipo: ${c.license.type || 'mensal'}</small>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        async function addCompany() {
+            const name = document.getElementById('comp-name').value;
+            const type = document.getElementById('lic-type').value;
+            if (!name) return alert('Digite o nome');
+            
+            const res = await fetch(`${API}/api/admin/companies`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, licenseType: type })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert('Empresa criada com sucesso!');
+                document.getElementById('comp-name').value = '';
+                loadCompanies();
+            }
+        }
+    </script>
+</body>
+</html>

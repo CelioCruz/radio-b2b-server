@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  devsistem-audio-server:
+    build: .
+    container_name: devsistem-audio-server
+    restart: always
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./storage:/app/storage
+      - ./db.json:/app/db.json
+    environment:
+      - PORT=3001
+      - BASE_URL=http://localhost:3001
+      - NODE_ENV=production
