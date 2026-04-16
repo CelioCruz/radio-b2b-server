@@ -1,0 +1,8 @@
+node_modules/
+dist/
+dist-electron/
+storage/musics/*.mp3
+storage/ads/*.mp3
+db.json
+.env
+*.log

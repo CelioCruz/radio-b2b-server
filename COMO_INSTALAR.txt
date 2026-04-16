@@ -1,0 +1,43 @@
+===========================================================
+   GUIA DE INSTALAÇÃO - DEVSISTEM AUDIO
+===========================================================
+
+Olá! Este guia ajudará você a instalar o sistema de rádio ambiente 
+da DevSistem Audio de forma correta e segura.
+
+1. COMO PASSAR PELO AVISO DO WINDOWS (SMARTSCREEN):
+-----------------------------------------------------------
+Como o nosso software é uma solução profissional dedicada e 
+personalizada, o Windows pode exibir uma tela azul dizendo: 
+"O Windows protegeu o seu computador".
+
+Para continuar a instalação:
+1. Clique no link "Mais informações" (texto pequeno abaixo da mensagem).
+2. Clique no botão "Executar assim mesmo" que aparecerá no rodapé.
+3. O instalador abrirá normalmente. Basta seguir os passos na tela.
+
+2. REQUISITOS E FUNCIONAMENTO:
+-----------------------------------------------------------
+- O sistema baixará 400 músicas automaticamente para o seu 
+  computador na primeira execução (requer internet).
+- Após o download inicial, o sistema funciona OFFLINE.
+- Recomenda-se abrir o sistema pelo menos uma vez por semana 
+  conectado à internet para validar a licença e atualizar o repertório.
+
+3. COMO INSERIR SEUS PRÓPRIOS ANÚNCIOS:
+-----------------------------------------------------------
+Você pode colocar seus próprios anúncios (arquivos .mp3) para 
+tocarem após cada música.
+1. Vá até a pasta "Documentos" do seu computador.
+2. Abra a pasta: "DevSistem_Audio_ANUNCIOS".
+3. Cole seus arquivos MP3 lá dentro. O sistema irá reconhecê-los 
+   automaticamente.
+
+4. SUPORTE TÉCNICO:
+-----------------------------------------------------------
+Caso tenha qualquer dúvida ou dificuldade na instalação:
+- E-mail: celio@devsistem.com.br
+- Responsável: Celio Cruz
+
+© 2026 DevSistem Audio - Todos os direitos reservados.
+===========================================================
