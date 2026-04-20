@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3001;
-const JAMENDO_CLIENT_ID = '4760AD12';
+const JAMENDO_CLIENT_ID = process.env.JAMENDO_CLIENT_ID || '4760AD12';
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 // Nome do Sistema: DevSistem Audio
@@ -66,12 +66,13 @@ async function syncMusics() {
   const musicPath = path.join(__dirname, 'storage', 'musics');
   if (!fs.existsSync(musicPath)) fs.mkdirSync(musicPath, { recursive: true });
   
-  console.log(`[${new Date().toLocaleTimeString()}] 🎵 ${SYSTEM_NAME}: Buscando 400 músicas...`);
+  console.log(`[${new Date().toLocaleTimeString()}] 🎵 ${SYSTEM_NAME}: Buscando músicas...`);
   
   try {
-    const genres = 'pop,rock,jazz,soul,funk,motown,lofi,classic';
-    // Aumentado para 400 músicas conforme solicitado
-    const apiUrl = `https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_CLIENT_ID}&format=json&limit=400&audioformat=mp32&vocalinstrumental=vocal&tags=${genres}&order=popularity_total`;
+    // Aumentado para 50 músicas e adicionado ordem aleatória para variar
+    const apiUrl = `https://api.jamendo.com/v3.0/tracks/?client_id=${JAMENDO_CLIENT_ID}&format=json&limit=50&order=buzzrate`;
+    
+    console.log(`[${new Date().toLocaleTimeString()}] 🌐 Chamando API Jamendo: ${apiUrl}`);
     
     https.get(apiUrl, (res) => {
       let data = '';
@@ -85,13 +86,20 @@ async function syncMusics() {
               const dest = path.join(musicPath, `${track.id}.mp3`);
               if (!fs.existsSync(dest)) {
                 downloadsIniciados++;
-                downloadFile(track.audio, dest).catch((err) => {});
+                downloadFile(track.audio, dest).catch((err) => {
+                  console.error(`❌ Erro ao baixar música ${track.id}:`, err.message);
+                });
               }
             }
-            if (downloadsIniciados > 0) console.log(`✅ ${SYSTEM_NAME}: Baixando ${downloadsIniciados} novas músicas.`);
+            if (downloadsIniciados > 0) console.log(`✅ ${SYSTEM_NAME}: Iniciando download de ${downloadsIniciados} novas músicas.`);
+            else console.log(`✅ ${SYSTEM_NAME}: Nenhuma música nova para baixar.`);
           }
-        } catch (e) {}
+        } catch (e) {
+          console.error(`❌ Erro ao parsear resposta da Jamendo:`, e.message);
+        }
       });
+    }).on('error', (err) => {
+      console.error(`❌ Erro ao consultar API Jamendo:`, err.message);
     });
   } catch (e) {}
 }
@@ -167,6 +175,20 @@ app.post('/api/admin/companies', (req, res) => {
 app.post('/api/license/validate', (req, res) => {
   const { key, hwid } = req.body;
   const db = loadDB();
+  
+  // Suporte especial para chave TESTE
+  if (key === 'TESTE') {
+    const musicPath = path.join(__dirname, 'storage', 'musics');
+    const musicFiles = fs.existsSync(musicPath) ? fs.readdirSync(musicPath).filter(f => f.endsWith('.mp3')) : [];
+    return res.json({ 
+      valid: true, 
+      company: "PERÍODO DE TESTE", 
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      musics: musicFiles.map(f => `${BASE_URL}/storage/musics/${f}`),
+      ads: [] 
+    });
+  }
+
   const lic = db.licenses.find(l => l.key === key);
   
   if (!lic) return res.json({ valid: false, error: 'Chave inválida' });

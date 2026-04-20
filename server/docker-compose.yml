@@ -6,11 +6,11 @@ services:
     container_name: devsistem-audio-server
     restart: always
     ports:
-      - "3001:3001"
+      - "3000:3000"
     volumes:
       - ./storage:/app/storage
       - ./db.json:/app/db.json
     environment:
-      - PORT=3001
-      - BASE_URL=http://localhost:3001
+      - PORT=3000
+      - BASE_URL=http://audio.seudominio.com
       - NODE_ENV=production

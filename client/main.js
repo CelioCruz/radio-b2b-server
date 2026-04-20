@@ -103,7 +103,7 @@ function createWindow() {
   win = new BrowserWindow({
     width: 480, height: 720,
     title: "DevSistem Audio",
-    icon: path.join(__dirname, 'radio.png'),
+    icon: path.join(__dirname, 'C_logo.png'),
     webPreferences: { 
       preload: path.join(__dirname, 'scr/preload.js'), 
       contextIsolation: true,
@@ -146,6 +146,7 @@ app.whenReady().then(() => {
 
   serverApp.use('/storage/musics', express.static(musicPath));
   serverApp.use('/storage/ads', express.static(USER_ADS_PATH));
+  serverApp.use('/assets', express.static(__dirname)); // Para servir o logo e outros assets
   
   serverApp.post('/api/license/validate', async (req, res) => {
     const { key, hwid } = req.body;
@@ -165,6 +166,7 @@ app.whenReady().then(() => {
           company: "DevSistem Audio (Modo Offline)",
           musics: localMusics.map(f => `http://localhost:${PORT_INTERNA}/storage/musics/${f}`),
           ads: adUrls,
+          logo: `http://localhost:${PORT_INTERNA}/assets/C_logo.png`,
           offline: true
         });
       } else {
@@ -178,6 +180,7 @@ app.whenReady().then(() => {
         return `http://localhost:${PORT_INTERNA}/storage/musics/${fileName}`;
       });
       result.ads = adUrls; // Envia os anúncios locais para o rádio
+      result.logo = `http://localhost:${PORT_INTERNA}/assets/C_logo.png`;
     }
 
     res.json(result);

@@ -109,7 +109,11 @@ function App() {
       </div>
 
       <div style={{ margin: '40px 0' }}>
-        <div style={{ fontSize: 80, marginBottom: 10 }}>{isAdPlaying ? '📢' : '📻'}</div>
+        {config.logo ? (
+          <img src={config.logo} alt="Logo" style={{ width: 120, height: 120, objectFit: 'contain', marginBottom: 10, borderRadius: 10 }} />
+        ) : (
+          <div style={{ fontSize: 80, marginBottom: 10 }}>{isAdPlaying ? '📢' : '📻'}</div>
+        )}
         <h3>{isAdPlaying ? 'Propaganda' : 'No Ar'}</h3>
         <p style={{ color: '#38bdf8', fontWeight: 'bold' }}>{isAdPlaying ? 'Anúncio Local' : currentTrackName}</p>
       </div>
