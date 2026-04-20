@@ -1,16 +1,24 @@
 version: '3.8'
 
+name: devsistem-audio
+
 services:
-  devsistem-audio-server:
+  server:
     build: .
     container_name: devsistem-audio-server
     restart: always
     ports:
-      - "3000:3000"
+      - "3001:3001"
     volumes:
       - ./storage:/app/storage
       - ./db.json:/app/db.json
     environment:
-      - PORT=3000
-      - BASE_URL=http://audio.seudominio.com
+      - PORT=3001
+      - BASE_URL=http://localhost:3001
       - NODE_ENV=production
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: devsistem-audio-tunnel
+    command: tunnel --url http://server:3001
+    restart: always

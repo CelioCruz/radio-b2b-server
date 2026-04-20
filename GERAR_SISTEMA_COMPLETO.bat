@@ -5,6 +5,7 @@ echo ===========================================================
 
 echo [1/3] Configurando Servidor Docker...
 cd server
+docker-compose down
 docker-compose up -d --build
 cd ..
 
