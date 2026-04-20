@@ -24,9 +24,15 @@
       "radio.png"
     ],
     "win": {
-      "target": "nsis",
+      "target": [
+        "portable"
+      ],
       "icon": "C_logo.png",
       "publisherName": "DevSistem"
+    },
+    "portable": {
+      "artifactName": "DevSistemAudio_Portable.exe",
+      "requestExecutionLevel": "user"
     },
     "nsis": {
       "oneClick": false,

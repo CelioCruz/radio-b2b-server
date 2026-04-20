@@ -19,7 +19,8 @@ cd ..
 
 echo ===========================================================
 echo   PROCESSO CONCLUIDO!
-echo   O instalador .exe esta na pasta client\dist-electron
+echo   O arquivo PORTABLE (.exe) esta na pasta client\dist-electron
+echo   Basta copiar o "DevSistemAudio_Portable.exe" e usar!
 echo   O servidor esta rodando em Docker na porta 3001
 echo ===========================================================
 pause
